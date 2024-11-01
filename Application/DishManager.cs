@@ -12,47 +12,47 @@ namespace Application
         public List<Dish> GetDishes(Order order)
         {
             var retVal = new List<Dish>();
-            order.Dishes.Sort();
-            foreach (var dishType in order.Dishes)
+            order.DishTypeIds.Sort();
+            foreach (var dishTypeId in order.DishTypeIds)
             {
-                AddOrderToList(dishType, retVal);
+                AddDishToList(dishTypeId, retVal);
             }
             return retVal;
         }
 
         /// <summary>
-        /// Takes an int, representing an order type, tries to find it in the list.
+        /// Takes an int, representing a dish type, tries to find it in the list.
         /// If the dish type does not exist, add it and set count to 1
         /// If the type exists, check if multiples are allowed and increment that instances count by one
         /// else throw error
         /// </summary>
-        /// <param name="order">int, represents a dishtype</param>
+        /// <param name="dishTypeId">int, represents a dishtype</param>
         /// <param name="retVal">a list of dishes. </param>
-        private void AddOrderToList(int order, List<Dish> retVal)
+        private void AddDishToList(int dishTypeId, List<Dish> retVal)
         {
-            string orderName = GetOrderName(order);
-            var existingOrder = retVal.SingleOrDefault(x => x.DishName == orderName);
-            if (existingOrder == null)
+            string dishName = GetDishNameByDishTypeId(dishTypeId);
+            var existingDishInOrder = retVal.SingleOrDefault(x => x.DishName == dishName);
+            if (existingDishInOrder == null)
             {
                 retVal.Add(new Dish
                 {
-                    DishName = orderName,
+                    DishName = dishName,
                     Count = 1
                 });
             }
-            else if (IsMultipleAllowed(order))
+            else if (AreMultiplesAllowedByDishTypeId(dishTypeId))
             {
-                existingOrder.Count++;
+                existingDishInOrder.Count++;
             }
             else
             {
-                throw new ApplicationException(string.Format("Multiple {0}(s) not allowed", orderName));
+                throw new ApplicationException(string.Format("Multiple {0}(s) not allowed", dishName));
             }
         }
 
-        private string GetOrderName(int order)
+        private string GetDishNameByDishTypeId(int dishTypeId)
         {
-            return order switch
+            return dishTypeId switch
             {
                 1 => "steak",
                 2 => "potato",
@@ -63,9 +63,9 @@ namespace Application
         }
 
 
-        private bool IsMultipleAllowed(int order)
+        private bool AreMultiplesAllowedByDishTypeId(int dishTypeId)
         {
-            return order switch
+            return dishTypeId switch
             {
                 2 => true,
                 _ => false,

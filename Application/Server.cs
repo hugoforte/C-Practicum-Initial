@@ -15,9 +15,13 @@ namespace Application
         {
             try
             {
+
                 Order order = ParseOrder(unparsedOrder);
+
                 List<Dish> dishes = _dishManager.GetDishes(order);
+
                 string retVal = FormatOutput(dishes);
+
                 return retVal;
             }
             catch (ApplicationException)
@@ -28,11 +32,11 @@ namespace Application
 
         private Order ParseOrder(string order)
         {
-            var orderItems = order.Split(',');
+            var dishTypeIds = order.Split(',');
             var retVal = new List<int>();
-            foreach (var orderItem in orderItems)
+            foreach (var dishTypeId in dishTypeIds)
             {
-                if (int.TryParse(orderItem, out int parsedOrder))
+                if (int.TryParse(dishTypeId, out int parsedOrder))
                 {
                     retVal.Add(parsedOrder);
                 }
@@ -43,7 +47,7 @@ namespace Application
             }
             return new Order
             {
-                Dishes = retVal
+                DishTypeIds = retVal
             };
         }
 
